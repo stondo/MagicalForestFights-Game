@@ -2,7 +2,7 @@
 
 ## Build docker image
 
-```$ docker build . -t stondo/magicalforestfight```
+```$ docker build . -t stondo/magicalforestfights```
 
 ## Run docker image
 ```$ docker run -it stondo/magicalforestfights:latest```
