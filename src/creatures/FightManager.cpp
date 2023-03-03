@@ -41,8 +41,8 @@ namespace MagicalForestFights::Creatures {
                                 ") is less than or equal to creature skill activation percentage: " +
                                 to_string(skill.get_skill_activation_percentage());
 
-                        damage += float(attacker->GetStrength() - defender->GetDefence());
-                        damage += float(attacker->GetStrength() - defender->GetDefence());
+                        auto applySkill = skill.UseFn(SKILL_FACTOR_FN);
+                        damage = applySkill(float(attacker->GetStrength() - defender->GetDefence()));
                     }
                 } else {
                     if (defender->IsLuckyEnoughToDodgeAttack()) {
@@ -50,7 +50,7 @@ namespace MagicalForestFights::Creatures {
                                                               to_string(defender->GetCurrentLuckthreshold()),
                                                               to_string(defender->GetLuck()));
                     } else {
-                        damage += float(attacker->GetStrength() - defender->GetDefence());
+                        damage = float(attacker->GetStrength() - defender->GetDefence());
                     }
                 }
             }
@@ -68,13 +68,14 @@ namespace MagicalForestFights::Creatures {
                                     ") is less than or equal to creature skill activation percentage: " +
                                     to_string(skill.get_skill_activation_percentage());
 
-                            damage += float(attacker->GetStrength() - defender->GetDefence()) / 2.0f;
+                            auto applySkill = skill.UseFn(SKILL_FACTOR_FN);
+                            damage = applySkill(float(attacker->GetStrength() - defender->GetDefence()));
                         } else {
-                            damage += float(attacker->GetStrength() - defender->GetDefence());
+                            damage = float(attacker->GetStrength() - defender->GetDefence());
                         }
                     }
                 } else {
-                    damage += float(attacker->GetStrength() - defender->GetDefence());
+                    damage = float(attacker->GetStrength() - defender->GetDefence());
                 }
 
             }

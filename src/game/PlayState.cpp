@@ -18,12 +18,12 @@ namespace MagicalForestFights::Game {
                                               "Rapid Strike",
                                               Attack(),
                                               "Strike twice while it's his turn to attack, there's a 10% chance he'll use this skill every time he attacks",
-                                              10)},
+                                              10, 2.0f)},
                                       std::vector<CreatureSkill>{CreatureSkill(
                                               "Magical Shield",
                                               Defense(),
                                               "Takes only half of the usual damage when an enemy attacks, there's a 20% chance he'll use this skill every time he defends.",
-                                              20)});
+                                              20, 0.5f)});
 
         wild_beast = new MagicalCreature("Wild Beast", std::tuple<int, int>(60, 90),
                                          std::tuple<int, int>(60, 90),

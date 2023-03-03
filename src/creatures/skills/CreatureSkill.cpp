@@ -11,11 +11,13 @@ namespace MagicalForestFights::Creatures {
     }
 
     CreatureSkill::CreatureSkill(std::string skill_name, SkillType skill_type, std::string skill_desc,
-                                 double percentage) :
+                                 double activation_percentage,
+                                 float skill_factor) :
             skill_name(std::move(skill_name)),
             skill_type(std::move(skill_type)),
             skill_description(std::move(skill_desc)),
-            skill_activation_percentage(percentage) {}
+            skill_activation_percentage(activation_percentage),
+            skill_factor(skill_factor) {}
 
     std::string CreatureSkill::get_skill_name() const {
         return skill_name;

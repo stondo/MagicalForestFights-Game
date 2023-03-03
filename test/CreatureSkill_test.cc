@@ -10,12 +10,12 @@ protected:
             "Rapid Strike",
             Attack(),
             "Strike twice while it's his turn to attack, there's a 10% chance he'll use this skill every time he attacks",
-            10);
+            10, 2.0f);
     CreatureSkill *magical_shield = new CreatureSkill(
             "Magical Shield",
             Defense(),
             "Takes only half of the usual damage when an enemy attacks, there's a 20% chance he'll use this skill every time he defends.",
-            20);
+            20, 0.5f);
 
 };
 
