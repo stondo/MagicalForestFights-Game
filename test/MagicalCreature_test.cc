@@ -89,6 +89,8 @@ TEST_F(MagicalCreatureTest, MagicalCreaturesStatsAreInExpectedRanges) {
     EXPECT_LE(natelus.GetDefence(), get<1>(hero_defence_tpl));
     EXPECT_GE(natelus.GetSpeed(), get<0>(hero_speed_tpl));
     EXPECT_LE(natelus.GetSpeed(), get<1>(hero_speed_tpl));
+    EXPECT_GE(natelus.GetLuck(), get<0>(hero_luck_tpl) / 100.0f);
+    EXPECT_LE(natelus.GetLuck(), get<1>(hero_luck_tpl) / 100.0f);
 
     EXPECT_GE(wild_beast.GetHealth(), get<0>(wildbeast_health_tpl));
     EXPECT_LE(wild_beast.GetHealth(), get<1>(wildbeast_health_tpl));
@@ -98,6 +100,8 @@ TEST_F(MagicalCreatureTest, MagicalCreaturesStatsAreInExpectedRanges) {
     EXPECT_LE(wild_beast.GetDefence(), get<1>(wildbeast_defence_tpl));
     EXPECT_GE(wild_beast.GetSpeed(), get<0>(wildbeast_speed_tpl));
     EXPECT_LE(wild_beast.GetSpeed(), get<1>(wildbeast_speed_tpl));
+    EXPECT_GE(wild_beast.GetLuck(), get<0>(wildbeast_luck_tpl) / 100.0f);
+    EXPECT_LE(wild_beast.GetLuck(), get<1>(wildbeast_luck_tpl) / 100.0f);
 }
 
 TEST_F(MagicalCreatureTest, VerifyCorrectNumOfSkills) {

@@ -38,6 +38,8 @@ namespace MagicalForestFights::Game {
 
     void PlayState::Cleanup() {
         current_turn = 1;
+        delete natelus;
+        delete wild_beast;
     }
 
     void PlayState::Pause() {}

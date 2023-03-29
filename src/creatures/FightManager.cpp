@@ -5,8 +5,6 @@ using namespace std;
 
 namespace MagicalForestFights::Creatures {
     double FightManager::generate_luck_threshold() {
-        // we make the generator and distribution 'static' to keep their value
-        // across calls to the function.
         random_device rd;
         static mt19937 gen(rd());
         static uniform_real_distribution<> dis(0.0, 1.0);
@@ -61,7 +59,7 @@ namespace MagicalForestFights::Creatures {
                                                       to_string(defender->GetLuck()));
             } else {
                 if (!defender->GetDefendingSkills().empty()) {
-                    for (auto skill : defender->GetDefendingSkills()) {
+                    for (const auto& skill : defender->GetDefendingSkills()) {
                         if (defender->IsLuckyEnoughToTriggerSkill(skill.get_skill_activation_percentage())) {
                             defender_used_skill_output = defender->GetName() + " has used " + skill.get_skill_name() +
                                     " skill!\n" + "because luck threshold (" + to_string(defender->GetCurrentLuckthreshold()) +

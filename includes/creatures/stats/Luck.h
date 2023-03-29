@@ -10,7 +10,6 @@ namespace MagicalForestFights::Creatures::Stats {
         using base_t = CreatureStat<T>;
     public:
         Luck(int min, int max) : CreatureStat<T>() {
-//            this->current_value /= 100.0;
             base_t::min_value = min;
             base_t::max_value = max;
             base_t::current_value = generate_init_stat(min, max) / 100.0;

@@ -1,6 +1,7 @@
 #include <string>
 #include <string_view>
 #include <functional>
+#include <utility>
 #include "SkillType.h"
 
 #ifndef MAGICALFOESTFIGHTS_CREATURESKILL_H
@@ -30,7 +31,7 @@ namespace MagicalForestFights::Creatures::Skills {
         [[nodiscard]] double get_skill_activation_percentage() const;
 
         [[nodiscard]] CurriedSkillFactorFn UseFn(SkillFactorFnType fn) const {
-            return curry(fn, this->skill_factor);
+            return curry(std::move(fn), this->skill_factor);
         }
 
         std::string skill_name;
