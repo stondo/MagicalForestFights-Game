@@ -15,6 +15,8 @@ namespace MagicalForestFights::Creatures::Stats {
             base_t::current_value = generate_init_stat(min, max);
         }
 
+        Health() = default;
+
         void SetHealth(T value) {
             base_t::current_value = value;
 //            this->current_value = value;
@@ -25,7 +27,7 @@ namespace MagicalForestFights::Creatures::Stats {
         }
 
         T generate_init_stat(int min, int max) override {
-            std::random_device rd; // obtain a generate_luck_threshold number from hardware
+            std::random_device rd; // obtain a generateLuckThreshold number from hardware
             static std::mt19937 gen(rd()); // seed the generator
             std::uniform_int_distribution<> distr(min, max); // define the range
             return static_cast<T>(distr(gen));

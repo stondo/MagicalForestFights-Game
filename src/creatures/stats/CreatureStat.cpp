@@ -18,7 +18,7 @@
 
 //    template <typename T>
 //    T CreatureStat<T>::generate_init_stat(int min, int max) {
-//        std::random_device rd; // obtain a generate_luck_threshold number from hardware
+//        std::random_device rd; // obtain a generateLuckThreshold number from hardware
 //        static std::mt19937 gen(rd()); // seed the generator
 //        std::uniform_int_distribution<> distr(min, max); // define the range
 ////        return distr(gen);

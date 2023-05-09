@@ -9,23 +9,70 @@
 using namespace std;
 
 namespace MagicalForestFights::Creatures {
+
+    enum CreatureProperty {
+        NAME = 0,
+        HEALTH,
+        STRENGTH,
+        DEFENSE,
+        SPEED,
+        LUCK
+    };
+
+    constexpr std::initializer_list<CreatureProperty> CreatureProperties = {NAME, HEALTH, STRENGTH, DEFENSE, SPEED, LUCK};
+
+    enum PropertyRange {
+        MIN = 0,
+        MAX
+    };
+
+    constexpr std::initializer_list<PropertyRange> PropertyRanges = {MIN, MAX};
+
+    enum CreatureSkillProperty {
+        SKILL_NAME = 0,
+        TYPE,
+        DESC,
+        ACTIVATION_PERCENTAGE,
+        SKILL_FACTOR
+    };
+
+    constexpr std::initializer_list<CreatureSkillProperty> CreatureSkillProperties = {SKILL_NAME, TYPE, DESC, ACTIVATION_PERCENTAGE, SKILL_FACTOR};
+
     class FightManager {
     public:
-        MagicalForestFights::Creatures::MagicalCreature *attacker;
-        MagicalForestFights::Creatures::MagicalCreature *defender;
+        [[nodiscard]] float GetDamageDone() const;
 
-        bool hasLuck(double luck_threshold, float creature_luck);
-        static double generate_luck_threshold();
+        void ProcessFight();
 
-        std::tuple<float, std::string, std::string, std::string> ProcessFight();
+        void PrintFightInfo(int current_turn, int max_turns);
 
-        void PrintFightInfo(float damage, const std::string& attacker_used_skill_output, const std::string& defender_dodged_output,
-                            const std::string& defender_used_skill_output, int current_turn, int max_turns);
+        FightManager();
+        FightManager(std::shared_ptr<MagicalCreature> hero, std::shared_ptr<MagicalCreature> beast);
 
-        FightManager(MagicalCreature *hero, MagicalCreature *beast);
+        void swapAttDef();
+
+        void SetFleeingState();
+
+        bool AnyMagicalCreatureDied();
 
     private:
-        void set_attacker_and_defender(MagicalCreature *hero, MagicalCreature *beast);
+        std::shared_ptr<MagicalCreature> attacker{};
+        std::shared_ptr<MagicalCreature> defender{};
+
+        static bool hasLuck(double luck_threshold, float creature_luck);
+        static double generateLuckThreshold();
+        void setAttackerAndDefender(const std::shared_ptr<MagicalCreature>& hero, const std::shared_ptr<MagicalCreature>& beast);
+        [[nodiscard]] float calculateDamage() const;
+
+        template <typename... Strings>
+        auto concatenate(Strings... strings);
+
+        float _damage = 0.0;
+        string _attackerUsedSkillOutput;
+        string _defenderDodgedOutput;
+        string _defenderUsedSkillOutput;
+
+        void readInitDataAndCreateMagicalCreatures();
     };
 }
 

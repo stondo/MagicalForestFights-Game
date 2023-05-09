@@ -29,10 +29,10 @@ namespace MagicalForestFights::Creatures {
         Defence<int> defence;
         Speed<int> speed;
         Luck<double> luck;
-        std::vector<CreatureSkill> attacking_skills;
-        std::vector<CreatureSkill> defending_skills;
-        MagicalCreatureState current_state = Alive();
-        double current_luck_threshold;
+        std::vector<CreatureSkill> attackingSkills;
+        std::vector<CreatureSkill> defendingSkills;
+        MagicalCreatureState currentState = Alive();
+        double currentLuckThreshold;
 
     public:
         std::string GetName();
@@ -40,7 +40,7 @@ namespace MagicalForestFights::Creatures {
         int GetStrength();
         int GetDefence() ;
         int GetSpeed();
-        float GetLuck();
+        double GetLuck();
         [[nodiscard]] double GetCurrentLuckthreshold() const;
         [[nodiscard]] MagicalCreatureState GetCurrentState() const;
         [[nodiscard]] const std::vector<CreatureSkill> & GetAttackingSkills() const;
@@ -65,6 +65,15 @@ namespace MagicalForestFights::Creatures {
         MagicalCreature(std::string name, std::tuple<int, int> health_tpl, std::tuple<int, int> strength_tpl,
                         std::tuple<int, int> defence_tpl, std::tuple<int, int> speed_tpl, std::tuple<int, int> luck_tpl,
                         std::vector<CreatureSkill> attacking_skills, std::vector<CreatureSkill> defending_skills);
+
+        MagicalCreature(const MagicalCreature& rhs);
+
+        MagicalCreature& operator=(const MagicalCreature& rhs);
+
+        MagicalCreature(MagicalCreature&& rhs) noexcept;
+
+        MagicalCreature& operator=(MagicalCreature&& rhs) noexcept;
+
     };
 }
 

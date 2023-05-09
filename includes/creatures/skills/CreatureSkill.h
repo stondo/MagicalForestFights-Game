@@ -8,6 +8,8 @@
 #define MAGICALFOESTFIGHTS_CREATURESKILL_H
 
 namespace MagicalForestFights::Creatures::Skills {
+    enum SkillType { ATTACK, DEFENSE };
+
     template<typename Function, typename... Arguments>
     auto curry(Function func, Arguments... args) {
         return [=](auto... rest) {
@@ -26,7 +28,7 @@ namespace MagicalForestFights::Creatures::Skills {
     public:
         [[nodiscard]] std::string get_skill_name() const;
 
-        std::string get_skill_name_with_desc();
+        [[nodiscard]] std::string get_skill_name_with_desc() const;
 
         [[nodiscard]] double get_skill_activation_percentage() const;
 

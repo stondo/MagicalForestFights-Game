@@ -1,7 +1,20 @@
 cmake_minimum_required(VERSION 3.22.1)
+set(CMAKE_C_COMPILER "/usr/bin/gcc-13")
+set(CMAKE_CXX_COMPILER "/usr/bin/g++-13")
 project(MagicalForestFights)
 
 set(CMAKE_CXX_STANDARD 23)
+
+#if(NOT TARGET spdlog)
+#    # Stand-alone build
+#    find_package(spdlog REQUIRED)
+#endif()
+#find_package(spdlog REQUIRED)
+
+find_package(ryml REQUIRED)
+
+include_directories("lib/spdlog/include")
+include_directories("lib/rapidvsc")
 
 if(POLICY CMP0135)
     cmake_policy(SET CMP0135 NEW)
@@ -30,7 +43,13 @@ add_executable(MagicalForestFights src/main.cpp
         includes/game/GameState.h src/game/GameEngine.cpp includes/game/GameEngine.h src/game/GameState.cpp
         src/game/IntroState.cpp includes/game/IntroState.h
         src/game/PlayState.cpp includes/game/PlayState.h
-        includes/constants.h)
+        includes/constants.h includes/creatures/skills/attacking/RapidStrike.h includes/creatures/skills/defending/MagicalShield.h includes/utils/CharContainer.h)
+target_link_libraries(MagicalForestFights ryml::ryml)
+
+add_custom_target(run MagicalForestFights
+        COMMAND $<TARGET_FILE:MagicalForestFights>
+        DEPENDS MagicalForestFights
+        COMMENT "running: $<TARGET_FILE:MagicalForestFights>")
 
 enable_testing()
 
@@ -47,10 +66,12 @@ add_executable(
         includes/creatures/skills/SkillType.h includes/creatures/MagicalCreatureState.h
         src/creatures/FightManager.cpp includes/creatures/FightManager.h
         test/CreatureSkill_test.cc
-        test/CreatureStat_test.cc test/MagicalCreature_test.cc src/creatures/FightManager.cpp includes/creatures/FightManager.h)
+        test/CreatureStat_test.cc test/MagicalCreature_test.cc src/creatures/FightManager.cpp includes/creatures/FightManager.h
+        includes/creatures/skills/attacking/RapidStrike.h includes/creatures/skills/defending/MagicalShield.h)
 target_link_libraries(
         MagicalForestFights_test
         GTest::gtest_main
+        ryml::ryml
 )
 
 include(GoogleTest)

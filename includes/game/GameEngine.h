@@ -34,8 +34,8 @@ namespace MagicalForestFights::Game {
         // the stack of states
         std::vector<GameState *> states;
 
-        bool running;
-        int turns;
+        bool running = false;
+        int turns = 0;
     };
 }
 

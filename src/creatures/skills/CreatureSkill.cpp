@@ -1,4 +1,4 @@
-#include <string_view>
+#include <sstream>
 #include <utility>
 
 #include "../../../includes/creatures/skills/CreatureSkill.h"
@@ -14,7 +14,7 @@ namespace MagicalForestFights::Creatures {
                                  double activation_percentage,
                                  float skill_factor) :
             skill_name(std::move(skill_name)),
-            skill_type(std::move(skill_type)),
+            skill_type(skill_type),
             skill_description(std::move(skill_desc)),
             skill_activation_percentage(activation_percentage),
             skill_factor(skill_factor) {}
@@ -23,7 +23,9 @@ namespace MagicalForestFights::Creatures {
         return skill_name;
     }
 
-    std::string CreatureSkill::get_skill_name_with_desc() {
-        return skill_name + " - " + skill_description;
+    std::string CreatureSkill::get_skill_name_with_desc() const {
+        std::stringstream ss;
+        ss << skill_name << " - " << skill_description;
+        return ss.str();
     }
 }
