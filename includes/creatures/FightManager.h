@@ -20,14 +20,10 @@ namespace MagicalForestFights::Creatures {
         SKILLS
     };
 
-    constexpr std::initializer_list<CreatureProperty> CreatureProperties = {HEALTH, STRENGTH, DEFENSE, SPEED, LUCK};
-
     enum PropertyRange {
         MIN = 0,
         MAX
     };
-
-    constexpr std::initializer_list<PropertyRange> PropertyRanges = {MIN, MAX};
 
     enum CreatureSkillProperty {
         SKILL_NAME = 0,
@@ -43,22 +39,21 @@ namespace MagicalForestFights::Creatures {
     public:
         [[nodiscard]] float GetDamageDone() const;
 
-        void ProcessFight();
-
-        void PrintFightInfo(int current_turn, int max_turns);
+        void ProcessFight(int current_turn = 1, int max_turns = 20);
 
         FightManager();
         FightManager(const std::unique_ptr<MagicalCreature> &hero, const std::unique_ptr<MagicalCreature> &beast);
 
         void swapAttDef();
 
-        void SetFleeingState();
+        void SetFleeingState(int max_turns);
 
         bool AnyMagicalCreatureDied();
 
     private:
         std::unique_ptr<MagicalCreature> attacker{};
         std::unique_ptr<MagicalCreature> defender{};
+        float _damage = 0.0;
 
         static bool hasLuck(double luck_threshold, float creature_luck);
         static double generateLuckThreshold();
@@ -67,11 +62,6 @@ namespace MagicalForestFights::Creatures {
 
         template <typename... Strings>
         auto concatenate(Strings... strings);
-
-        float _damage = 0.0;
-        string _attackerUsedSkillOutput;
-        string _defenderDodgedOutput;
-        string _defenderUsedSkillOutput;
 
         void readInitDataAndCreateMagicalCreatures();
     };

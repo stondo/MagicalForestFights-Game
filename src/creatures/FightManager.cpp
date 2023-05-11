@@ -1,13 +1,10 @@
 #include <cstring>
 #include <string>
 #include <sstream>
-#include <iostream>
 #include <unordered_map>
 #include "spdlog/spdlog.h"
 #include "../../includes/creatures/FightManager.h"
 #include "../../includes/utils/CharContainer.h"
-#include "../../includes/creatures/skills/RapidStrike.h"
-#include "../../includes/creatures/skills/MagicalShield.h"
 
 using namespace std;
 
@@ -15,7 +12,7 @@ namespace MagicalForestFights::Creatures {
     double FightManager::generateLuckThreshold() {
         random_device rd;
         static mt19937 gen(rd());
-        static uniform_real_distribution<> dis(0.0, 1.0);
+        uniform_real_distribution<> dis(0.0, 1.0);
         return dis(gen);
     }
 
@@ -29,9 +26,26 @@ namespace MagicalForestFights::Creatures {
         return result;
     }
 
-    void FightManager::ProcessFight() {
+    void FightManager::ProcessFight(int current_turn, int max_turns) {
+        _damage = 0.0;
+        string _attackerUsedSkillOutput;
+        string _defenderDodgedOutput;
+        string _defenderUsedSkillOutput;
+
         attacker->SetCurrentLuckthreshold(generateLuckThreshold());
         defender->SetCurrentLuckthreshold(generateLuckThreshold());
+
+        if (current_turn == 1) {
+            attacker->PrintInitStats();
+            defender->PrintInitStats();
+        }
+
+        spdlog::info("\nTURN # {}/{}", current_turn, max_turns);
+        spdlog::info("{} attacks {}", attacker->GetName(), defender->GetName());
+        spdlog::info(defender->GetName() + " luck threshold: {} - creature luck: {}",
+                     defender->GetCurrentLuckthreshold(), defender->GetLuck());
+        spdlog::info(defender->GetName() + " is {}",
+                     hasLuck(defender->GetCurrentLuckthreshold(), defender->GetLuck()) ? "lucky" : "not lucky");
 
         auto def_dodged_f = [](const string &name, const double &curr_luck_threshold, const double &luck) -> string {
             std::stringstream ss;
@@ -53,27 +67,33 @@ namespace MagicalForestFights::Creatures {
         if (!attacker->GetAttackingSkills().empty())
             for (const auto &skill: attacker->GetAttackingSkills()) {
                 if (attacker->IsLuckyEnoughToTriggerSkill(skill.get_skill_activation_percentage()))
-                    if (defender->IsLuckyEnoughToDodgeAttack())
+                    if (defender->IsLuckyEnoughToDodgeAttack()) {
                         _defenderDodgedOutput = def_dodged_f(defender->GetName(),
                                                              defender->GetCurrentLuckthreshold(),
                                                              defender->GetLuck());
-                    else {
+
+                        _damage = 0.0;
+                    } else {
                         _attackerUsedSkillOutput = used_skill_f(attacker->GetName(), skill.get_skill_name(),
                                                                 attacker->GetCurrentLuckthreshold(),
                                                                 skill.get_skill_activation_percentage());
                         _damage = skill.UseFn(SKILL_FACTOR_FN)(calculateDamage());
                     }
-                else if (defender->IsLuckyEnoughToDodgeAttack())
+                else if (defender->IsLuckyEnoughToDodgeAttack()) {
                     _defenderDodgedOutput = def_dodged_f(defender->GetName(),
                                                          defender->GetCurrentLuckthreshold(),
                                                          defender->GetLuck());
-                else
+                    _damage = 0.0;
+                } else
                     _damage = calculateDamage();
             }
-        else if (defender->IsLuckyEnoughToDodgeAttack())
+        else if (defender->IsLuckyEnoughToDodgeAttack()) {
             _defenderDodgedOutput = def_dodged_f(defender->GetName(),
                                                  defender->GetCurrentLuckthreshold(),
                                                  defender->GetLuck());
+
+            _damage = 0.0;
+        }
         else if (!defender->GetDefendingSkills().empty())
             for (const auto &skill: defender->GetDefendingSkills()) {
                 if (defender->IsLuckyEnoughToTriggerSkill(skill.get_skill_activation_percentage())) {
@@ -89,42 +109,9 @@ namespace MagicalForestFights::Creatures {
 
         if (_damage > 0) defender->UpdateDefenderHealthAndState(_damage);
         else _damage = 0;
-    }
-
-    void FightManager::setAttackerAndDefender(const std::unique_ptr<MagicalCreature> &hero,
-                                              const std::unique_ptr<MagicalCreature> &beast) {
-        cout << "hero name: " << hero->GetName() << endl;
-        cout << "hero name: " << beast->GetName() << endl;
-
-        if ((hero->GetSpeed() == beast->GetSpeed() && hero->GetLuck() >= beast->GetLuck()) ||
-            hero->GetSpeed() > beast->GetSpeed()) {
-            hero->SetCurrentState(Attacking());
-            beast->SetCurrentState(Defending());
-//            this->attacker = hero;
-//            this->defender = beast;
-            swap(attacker, defender);
-        } else {
-            beast->SetCurrentState(Attacking());
-            hero->SetCurrentState(Defending());
-            swap(attacker, defender);
-//            this->attacker = beast;
-//            this->defender = hero;
-        }
-
-        spdlog::info("\n\n {} attacks first!", attacker->GetName());
-    }
-
-    void FightManager::PrintFightInfo(int current_turn, int max_turns) {
-        spdlog::info("\nTURN # {}/{}", current_turn, max_turns);
-        spdlog::info("{} attacks {}", attacker->GetName(), defender->GetName());
-        spdlog::info(defender->GetName() + " luck threshold: {} - creature luck: {}",
-                     defender->GetCurrentLuckthreshold(), defender->GetLuck());
-        spdlog::info(defender->GetName() + " is {}",
-                     hasLuck(defender->GetCurrentLuckthreshold(), defender->GetLuck()) ? "lucky" : "not lucky");
 
         if (!_attackerUsedSkillOutput.empty())
             spdlog::warn(_attackerUsedSkillOutput);
-
 
         if (!_defenderUsedSkillOutput.empty())
             spdlog::warn(_defenderUsedSkillOutput);
@@ -142,6 +129,21 @@ namespace MagicalForestFights::Creatures {
         }
     }
 
+    void FightManager::setAttackerAndDefender(const std::unique_ptr<MagicalCreature> &hero,
+                                              const std::unique_ptr<MagicalCreature> &beast) {
+        if ((hero->GetSpeed() == beast->GetSpeed() && hero->GetLuck() >= beast->GetLuck()) ||
+            hero->GetSpeed() > beast->GetSpeed()) {
+            hero->SetCurrentState(Attacking());
+            beast->SetCurrentState(Defending());
+        } else {
+            beast->SetCurrentState(Attacking());
+            hero->SetCurrentState(Defending());
+        }
+
+        swap(attacker, defender);
+        spdlog::info("\n\n {} attacks first!", attacker->GetName());
+    }
+
     bool FightManager::hasLuck(double luck_threshold, float creature_luck) {
         return luck_threshold <= creature_luck;
     }
@@ -155,17 +157,18 @@ namespace MagicalForestFights::Creatures {
     }
 
     void FightManager::swapAttDef() {
-//        auto temp = attacker;
-//        attacker = defender;
-//        defender =  temp;
         swap(attacker, defender);
         attacker->SetCurrentState(Attacking());
         defender->SetCurrentState(Defending());
     }
 
-    void FightManager::SetFleeingState() {
+    void FightManager::SetFleeingState(int max_turns) {
         attacker->SetCurrentState(Fleeing());
         defender->SetCurrentState(Fleeing());
+        spdlog::info("{} have passed and both {} and {Wild Beast} are sill alive.\n"
+                     "They were both too severely wounded to continue the fight and decided to flee!",
+                     max_turns, attacker->GetName(), defender->GetName());
+        spdlog::info("GAME OVER");
     }
 
     bool FightManager::AnyMagicalCreatureDied() {
@@ -182,7 +185,7 @@ namespace MagicalForestFights::Creatures {
     }
 
     void FightManager::readInitDataAndCreateMagicalCreatures() {
-        std::cout << "Reading config file" << std::endl;
+        spdlog::info("Reading config file");
 
         auto extractCreatureStats = [](const ryml::ConstNodeRef &creature) -> unique_ptr<MagicalCreature> {
             auto skillFactoryLambda = [](const string &skillName, SkillType skillType, const string &skillDesc, double ap, float sf) -> CreatureSkill {
@@ -210,25 +213,19 @@ namespace MagicalForestFights::Creatures {
             vector<unordered_map<int, string>> creatureSkills;
 
             creature[NAME] >> heroName;
-            std::cout << heroName << std::endl;
 
-            std::cout << creature[HEALTH].key() << std::endl;
             creature[HEALTH][MIN] >> creaturePropsMap[HEALTH][MIN];
             creature[HEALTH][MAX] >> creaturePropsMap[HEALTH][MAX];
 
-            std::cout << creature[STRENGTH].key() << std::endl;
             creature[STRENGTH][MIN] >> creaturePropsMap[STRENGTH][MIN];
             creature[STRENGTH][MAX] >> creaturePropsMap[STRENGTH][MAX];
 
-            std::cout << creature[DEFENSE].key() << std::endl;
             creature[DEFENSE][MIN] >> creaturePropsMap[DEFENSE][MIN];
             creature[DEFENSE][MAX] >> creaturePropsMap[DEFENSE][MAX];
 
-            std::cout << creature[SPEED].key() << std::endl;
             creature[SPEED][MIN] >> creaturePropsMap[SPEED][MIN];
             creature[SPEED][MAX] >> creaturePropsMap[SPEED][MAX];
 
-            std::cout << creature[LUCK].key() << std::endl;
             creature[LUCK][MIN] >> creaturePropsMap[LUCK][MIN];
             creature[LUCK][MAX] >> creaturePropsMap[LUCK][MAX];
 
@@ -241,10 +238,9 @@ namespace MagicalForestFights::Creatures {
             };
 
             for (size_t k = 0; k < creature[SKILLS].num_children(); k++) {
-                for (auto skillProp: CreatureSkillProperties) {
-//                    std::cout << creature[SKILLS][k][skillProp].val() << std::endl;
+                for (auto skillProp: CreatureSkillProperties)
                     creature[SKILLS][k][skillProp] >> creatureSkillsMap[skillProp];
-                }
+
                 creatureSkills.push_back(creatureSkillsMap);
             }
 
@@ -275,62 +271,13 @@ namespace MagicalForestFights::Creatures {
                     defendingSkills
             );
 
-
             return newCreature;
-
-
-//            const auto attackingSkills = [](const vector<unordered_map<int, string>>& cs) -> vector<CreatureSkill>{
-//                vector<CreatureSkill> res;
-//                for_each (cs.begin(), cs.end(), [&res](const unordered_map<int, string>& skill){
-//                    if (skill[TYPE] == "attack") {
-//                        CreatureSkill creatureSkill{
-//                                skill[SKILL_NAME], skill[TYPE], skill[DESC],
-//                                skill[ACTIVATION_PERCENTAGE], skill[SKILL_FACTOR]
-//                        };
-//                        res.push_back(creatureSkill);
-//                    }
-//                });
-//
-//                return res;
-//            };
-//
-//            const auto defendingSkills = [](const vector<unordered_map<int, string>>& cs) -> vector<CreatureSkill>{
-//                vector<CreatureSkill> res;
-//
-//                for_each (cs.begin(), cs.end(), [&res](const unordered_map<int, string>& skill){
-//                    if (skill[TYPE] == "defense") {
-//                        CreatureSkill creatureSkill{
-//                                skill[SKILL_NAME], skill[TYPE], skill[DESC],
-//                                skill[ACTIVATION_PERCENTAGE], skill[SKILL_FACTOR]
-//                        };
-//                        res.push_back(creatureSkill);
-//                    }
-//                });
-
-//                return res;
-//            };
-
-
-//            //print heroPropsMap
-//            for (auto hp: creaturePropsMap) {
-//                cout << hp.first << " " << hp.second[MIN] << " " << hp.second[MAX] << endl;
-//            }
-//
-//            //print creatureSkills
-//            for (const auto& skill: creatureSkills) {
-//                //print skill
-//                for (const auto& skillProp: skill) {
-//                    cout << skillProp.first << " " << skillProp.second << endl;
-//                }
-//            }
-
         };
 
         const char filename[] = "config.yaml";
         auto contents = file_get_contents<std::string>(filename);
 
         ryml::Tree tree = ryml::parse_in_arena(ryml::to_csubstr(contents)); // immutable (csubstr) overload
-        // ryml::ConstNodeRef root = tree.crootref();
 
         ryml::ConstNodeRef heroes = tree["heroes"];
         ryml::ConstNodeRef monsters = tree["monsters"];
@@ -343,7 +290,6 @@ namespace MagicalForestFights::Creatures {
         for (size_t i = 0; i < monsters.num_children(); i++)
             mcs.push_back(extractCreatureStats(monsters[i]));
 
-        cout << "mcs size:" << to_string(mcs.size()) << endl;
         attacker = std::move(mcs[0]);
         defender = std::move(mcs[1]);
     }
