@@ -43,7 +43,7 @@ add_executable(MagicalForestFights src/main.cpp
         includes/game/GameState.h src/game/GameEngine.cpp includes/game/GameEngine.h src/game/GameState.cpp
         src/game/IntroState.cpp includes/game/IntroState.h
         src/game/PlayState.cpp includes/game/PlayState.h
-        includes/constants.h includes/creatures/skills/attacking/RapidStrike.h includes/creatures/skills/defending/MagicalShield.h includes/utils/CharContainer.h)
+        includes/constants.h includes/creatures/skills/RapidStrike.h includes/creatures/skills/MagicalShield.h includes/utils/CharContainer.h)
 target_link_libraries(MagicalForestFights ryml::ryml)
 
 add_custom_target(run MagicalForestFights
@@ -67,7 +67,7 @@ add_executable(
         src/creatures/FightManager.cpp includes/creatures/FightManager.h
         test/CreatureSkill_test.cc
         test/CreatureStat_test.cc test/MagicalCreature_test.cc src/creatures/FightManager.cpp includes/creatures/FightManager.h
-        includes/creatures/skills/attacking/RapidStrike.h includes/creatures/skills/defending/MagicalShield.h)
+        includes/creatures/skills/RapidStrike.h includes/creatures/skills/MagicalShield.h)
 target_link_libraries(
         MagicalForestFights_test
         GTest::gtest_main

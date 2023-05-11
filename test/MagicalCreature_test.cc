@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "../includes/creatures/MagicalCreature.h"
-#include "../includes/creatures/skills/attacking/RapidStrike.h"
-#include "../includes/creatures/skills/defending/MagicalShield.h"
+#include "../includes/creatures/skills/RapidStrike.h"
+#include "../includes/creatures/skills/MagicalShield.h"
 #include "../includes/creatures/FightManager.h"
 
 using namespace MagicalForestFights::Creatures;
@@ -17,7 +17,7 @@ protected:
     std::tuple<int, int> hero_speed_tpl = std::tuple<int, int>(40, 50);
     std::tuple<int, int> hero_luck_tpl = std::tuple<int, int>(10, 30);
 
-    std::shared_ptr<MagicalCreature> natelus = std::make_shared<MagicalCreature>(hero_name, hero_health_tpl, hero_strength_tpl,
+    std::unique_ptr<MagicalCreature> natelus = std::make_unique<MagicalCreature>(hero_name, hero_health_tpl, hero_strength_tpl,
                                                    hero_defence_tpl,hero_speed_tpl, hero_luck_tpl,
                                   std::vector<CreatureSkill>{RapidStrike()},
                                   std::vector<CreatureSkill>{MagicalShield()});
@@ -29,26 +29,26 @@ protected:
     std::tuple<int, int> wildbeast_speed_tpl = std::tuple<int, int>(40, 60);
     std::tuple<int, int> wildbeast_luck_tpl = std::tuple<int, int>(25, 40);
 
-    std::shared_ptr<MagicalCreature> wild_beast = std::make_shared<MagicalCreature>(wildbeast_name, wildbeast_health_tpl, wildbeast_strength_tpl,
+    std::unique_ptr<MagicalCreature> wild_beast = std::make_unique<MagicalCreature>(wildbeast_name, wildbeast_health_tpl, wildbeast_strength_tpl,
                                      wildbeast_defence_tpl, wildbeast_speed_tpl, wildbeast_luck_tpl,
                                      std::vector<CreatureSkill>{},
                                      std::vector<CreatureSkill>{});
 
-    std::shared_ptr<MagicalCreature> god_natelus = std::make_shared<MagicalCreature>("NatelusGod", std::tuple<int, int>(100, 100),
+    std::unique_ptr<MagicalCreature> god_natelus = std::make_unique<MagicalCreature>("NatelusGod", std::tuple<int, int>(100, 100),
                                   std::tuple<int, int>(100, 100),
                                   std::tuple<int, int>(100, 100), std::tuple<int, int>(100, 100),
                                   std::tuple<int, int>(100, 100),
                                   std::vector<CreatureSkill>{RapidStrike()},
                                   std::vector<CreatureSkill>{MagicalShield()});
 
-    std::shared_ptr<MagicalCreature> god_natelus_no_skill = std::make_shared<MagicalCreature>("NatelusGod", std::tuple<int, int>(10, 100),
+    std::unique_ptr<MagicalCreature> god_natelus_no_skill = std::make_unique<MagicalCreature>("NatelusGod", std::tuple<int, int>(10, 100),
                                                   std::tuple<int, int>(100, 100),
                                                   std::tuple<int, int>(100, 100), std::tuple<int, int>(100, 100),
                                                   std::tuple<int, int>(100, 100),
                                                            std::vector<CreatureSkill>{},
                                                            std::vector<CreatureSkill>{});
 
-    std::shared_ptr<MagicalCreature> weak_wild_beast = std::make_shared<MagicalCreature>("Weak Wild Beast", std::tuple<int, int>(50, 50),
+    std::unique_ptr<MagicalCreature> weak_wild_beast = std::make_unique<MagicalCreature>("Weak Wild Beast", std::tuple<int, int>(50, 50),
                                      std::tuple<int, int>(50, 50),
                                      std::tuple<int, int>(50, 50), std::tuple<int, int>(50, 50),
                                      std::tuple<int, int>(0, 0),

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "../includes/creatures/skills/CreatureSkill.h"
-#include "../includes/creatures/skills/attacking/RapidStrike.h"
-#include "../includes/creatures/skills/defending/MagicalShield.h"
+#include "../includes/creatures/skills/RapidStrike.h"
+#include "../includes/creatures/skills/MagicalShield.h"
 
 using namespace MagicalForestFights::Creatures::Skills;
 using ::testing::DoubleLE;

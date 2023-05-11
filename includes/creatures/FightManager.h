@@ -16,10 +16,11 @@ namespace MagicalForestFights::Creatures {
         STRENGTH,
         DEFENSE,
         SPEED,
-        LUCK
+        LUCK,
+        SKILLS
     };
 
-    constexpr std::initializer_list<CreatureProperty> CreatureProperties = {NAME, HEALTH, STRENGTH, DEFENSE, SPEED, LUCK};
+    constexpr std::initializer_list<CreatureProperty> CreatureProperties = {HEALTH, STRENGTH, DEFENSE, SPEED, LUCK};
 
     enum PropertyRange {
         MIN = 0,
@@ -47,7 +48,7 @@ namespace MagicalForestFights::Creatures {
         void PrintFightInfo(int current_turn, int max_turns);
 
         FightManager();
-        FightManager(std::shared_ptr<MagicalCreature> hero, std::shared_ptr<MagicalCreature> beast);
+        FightManager(const std::unique_ptr<MagicalCreature> &hero, const std::unique_ptr<MagicalCreature> &beast);
 
         void swapAttDef();
 
@@ -56,12 +57,12 @@ namespace MagicalForestFights::Creatures {
         bool AnyMagicalCreatureDied();
 
     private:
-        std::shared_ptr<MagicalCreature> attacker{};
-        std::shared_ptr<MagicalCreature> defender{};
+        std::unique_ptr<MagicalCreature> attacker{};
+        std::unique_ptr<MagicalCreature> defender{};
 
         static bool hasLuck(double luck_threshold, float creature_luck);
         static double generateLuckThreshold();
-        void setAttackerAndDefender(const std::shared_ptr<MagicalCreature>& hero, const std::shared_ptr<MagicalCreature>& beast);
+        void setAttackerAndDefender(const std::unique_ptr<MagicalCreature> &hero, const std::unique_ptr<MagicalCreature> &beast);
         [[nodiscard]] float calculateDamage() const;
 
         template <typename... Strings>
