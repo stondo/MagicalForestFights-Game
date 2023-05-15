@@ -2,6 +2,7 @@
 #define MAGICALFOESTFIGHTS_FIGHTMANAGER_H
 
 #include <random>
+#include <memory>
 #include <utility>
 #include <tuple>
 #include "MagicalCreature.h"
@@ -42,7 +43,7 @@ namespace MagicalForestFights::Creatures {
         void ProcessFight(int current_turn = 1, int max_turns = 20);
 
         FightManager();
-        FightManager(const std::unique_ptr<MagicalCreature> &hero, const std::unique_ptr<MagicalCreature> &beast);
+        FightManager(const MagicalCreature &hero, const MagicalCreature &beast);
 
         void swapAttDef();
 
@@ -51,13 +52,13 @@ namespace MagicalForestFights::Creatures {
         bool AnyMagicalCreatureDied();
 
     private:
-        std::unique_ptr<MagicalCreature> attacker{};
-        std::unique_ptr<MagicalCreature> defender{};
+        std::unique_ptr<MagicalCreature> attacker;
+        std::unique_ptr<MagicalCreature> defender;
         float _damage = 0.0;
 
         static bool hasLuck(double luck_threshold, float creature_luck);
         static double generateLuckThreshold();
-        void setAttackerAndDefender(const std::unique_ptr<MagicalCreature> &hero, const std::unique_ptr<MagicalCreature> &beast);
+        void setAttackerAndDefender();
         [[nodiscard]] float calculateDamage() const;
 
         template <typename... Strings>

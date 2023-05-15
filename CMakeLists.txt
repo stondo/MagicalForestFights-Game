@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.22.1)
-set(CMAKE_C_COMPILER "/usr/bin/gcc-13")
-set(CMAKE_CXX_COMPILER "/usr/bin/g++-13")
+set(CMAKE_C_COMPILER "/usr/bin/gcc")
+set(CMAKE_CXX_COMPILER "/usr/bin/g++")
 project(MagicalForestFights)
 
 set(CMAKE_CXX_STANDARD 23)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall -Wextra -Werror -std=c++23")
 
 #if(NOT TARGET spdlog)
 #    # Stand-alone build
@@ -37,7 +39,6 @@ add_executable(MagicalForestFights src/main.cpp
         includes/creatures/stats/Defence.h includes/creatures/stats/Speed.h
         includes/creatures/stats/Luck.h
         src/creatures/skills/CreatureSkill.cpp includes/creatures/skills/CreatureSkill.h
-        includes/creatures/skills/SkillType.h
         src/creatures/FightManager.cpp includes/creatures/FightManager.h
         includes/creatures/MagicalCreatureState.h
         includes/game/GameState.h src/game/GameEngine.cpp includes/game/GameEngine.h src/game/GameState.cpp
@@ -63,7 +64,7 @@ add_executable(
         includes/creatures/stats/Speed.h
         includes/creatures/stats/Luck.h
         src/creatures/skills/CreatureSkill.cpp includes/creatures/skills/CreatureSkill.h
-        includes/creatures/skills/SkillType.h includes/creatures/MagicalCreatureState.h
+        includes/creatures/MagicalCreatureState.h
         src/creatures/FightManager.cpp includes/creatures/FightManager.h
         test/CreatureSkill_test.cc
         test/CreatureStat_test.cc test/MagicalCreature_test.cc src/creatures/FightManager.cpp includes/creatures/FightManager.h

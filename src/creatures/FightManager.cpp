@@ -40,11 +40,14 @@ namespace MagicalForestFights::Creatures {
             defender->PrintInitStats();
         }
 
-        spdlog::info("\nTURN # {}/{}", current_turn, max_turns);
+        spdlog::info("\n");
+        spdlog::info("TURN # {}/{}", current_turn, max_turns);
         spdlog::info("{} attacks {}", attacker->GetName(), defender->GetName());
-        spdlog::info(defender->GetName() + " luck threshold: {} - creature luck: {}",
+
+        spdlog::info( "{} luck threshold: {} - creature luck: {}", defender->GetName(),
                      defender->GetCurrentLuckthreshold(), defender->GetLuck());
-        spdlog::info(defender->GetName() + " is {}",
+
+        spdlog::info( "{} is {}", defender->GetName(),
                      hasLuck(defender->GetCurrentLuckthreshold(), defender->GetLuck()) ? "lucky" : "not lucky");
 
         auto def_dodged_f = [](const string &name, const double &curr_luck_threshold, const double &luck) -> string {
@@ -77,7 +80,7 @@ namespace MagicalForestFights::Creatures {
                         _attackerUsedSkillOutput = used_skill_f(attacker->GetName(), skill.get_skill_name(),
                                                                 attacker->GetCurrentLuckthreshold(),
                                                                 skill.get_skill_activation_percentage());
-                        _damage = skill.UseFn(SKILL_FACTOR_FN)(calculateDamage());
+                        _damage = skill.UseFn(skill.SKILL_FACTOR_FN)(calculateDamage());
                     }
                 else if (defender->IsLuckyEnoughToDodgeAttack()) {
                     _defenderDodgedOutput = def_dodged_f(defender->GetName(),
@@ -100,7 +103,7 @@ namespace MagicalForestFights::Creatures {
                     _defenderUsedSkillOutput = used_skill_f(defender->GetName(), skill.get_skill_name(),
                                                             defender->GetCurrentLuckthreshold(),
                                                             skill.get_skill_activation_percentage());
-                    _damage = skill.UseFn(SKILL_FACTOR_FN)(calculateDamage());
+                    _damage = skill.UseFn(skill.SKILL_FACTOR_FN)(calculateDamage());
                 } else
                     _damage = calculateDamage();
             }
@@ -120,7 +123,7 @@ namespace MagicalForestFights::Creatures {
             spdlog::warn(_defenderDodgedOutput);
 
         auto f = [](float d) -> string { return d != 0.0 ? to_string(d) : "no"; };
-        spdlog::info("{} has dealt {} _damage to {}", attacker->GetName(), f(_damage), defender->GetName());
+        spdlog::info("{} has dealt {} damage to {}", attacker->GetName(), f(_damage), defender->GetName());
         spdlog::info("{}'s health left: {}", defender->GetName(), defender->GetHealth());
 
         if (defender->GetHealth() == 0) {
@@ -129,19 +132,15 @@ namespace MagicalForestFights::Creatures {
         }
     }
 
-    void FightManager::setAttackerAndDefender(const std::unique_ptr<MagicalCreature> &hero,
-                                              const std::unique_ptr<MagicalCreature> &beast) {
-        if ((hero->GetSpeed() == beast->GetSpeed() && hero->GetLuck() >= beast->GetLuck()) ||
-            hero->GetSpeed() > beast->GetSpeed()) {
-            hero->SetCurrentState(Attacking());
-            beast->SetCurrentState(Defending());
-        } else {
-            beast->SetCurrentState(Attacking());
-            hero->SetCurrentState(Defending());
-        }
+    void FightManager::setAttackerAndDefender() {
+        if ((defender->GetSpeed() == attacker->GetSpeed() && defender->GetLuck() >= attacker->GetLuck()) ||
+            defender->GetSpeed() > attacker->GetSpeed())
+                swap(attacker, defender);
 
-        swap(attacker, defender);
-        spdlog::info("\n\n {} attacks first!", attacker->GetName());
+        attacker->SetCurrentState(Attacking());
+        defender->SetCurrentState(Defending());
+
+        spdlog::info("\n\n {}attacks first!", attacker->GetName());
     }
 
     bool FightManager::hasLuck(double luck_threshold, float creature_luck) {
@@ -165,8 +164,7 @@ namespace MagicalForestFights::Creatures {
     void FightManager::SetFleeingState(int max_turns) {
         attacker->SetCurrentState(Fleeing());
         defender->SetCurrentState(Fleeing());
-        spdlog::info("{} have passed and both {} and {Wild Beast} are sill alive.\n"
-                     "They were both too severely wounded to continue the fight and decided to flee!",
+        spdlog::info("{} have passed and both {} and {} are sill alive.\nThey were both too severely wounded to continue the fight and decided to flee!",
                      max_turns, attacker->GetName(), defender->GetName());
         spdlog::info("GAME OVER");
     }
@@ -177,11 +175,13 @@ namespace MagicalForestFights::Creatures {
 
     FightManager::FightManager() {
         readInitDataAndCreateMagicalCreatures();
-        setAttackerAndDefender(attacker, defender);
+        setAttackerAndDefender();
     }
 
-    FightManager::FightManager(const std::unique_ptr<MagicalCreature> &hero, const std::unique_ptr<MagicalCreature> &beast) {
-        setAttackerAndDefender(hero, beast);
+    FightManager::FightManager(const MagicalCreature &hero, const MagicalCreature &beast) {
+        attacker = make_unique<MagicalCreature>(hero);
+        defender = make_unique<MagicalCreature>(beast);
+        setAttackerAndDefender();
     }
 
     void FightManager::readInitDataAndCreateMagicalCreatures() {

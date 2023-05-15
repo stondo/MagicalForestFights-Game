@@ -35,22 +35,20 @@ namespace MagicalForestFights::Creatures {
     }
 
     void MagicalCreature::PrintInitStats() {
-        std::stringstream ss;
-        ss << "\n\n" << name << " is " << currentState.get_value() << ":\n\n"
-                  << "Health: " << to_string(health.get_current_value()) << endl
-                  << "Strength: " << to_string(strength.get_current_value()) << endl
-                  << "Defence: " << to_string(defence.get_current_value()) << endl
-                  << "Speed: " << to_string(speed.get_current_value()) << endl
-                  << "Luck: " << to_string(luck.get_current_value()) << "%" << endl;
+        spdlog::info("{} is {}:", name, currentState.get_value());
+        spdlog::info("Health: {}", health.get_current_value());
+        spdlog::info("Strength: {}", strength.get_current_value());
+        spdlog::info("Defence: {}", defence.get_current_value());
+        spdlog::info("Speed: {}", speed.get_current_value());
+        spdlog::info("Luck: {}%", luck.get_current_value());
 
-        spdlog::info(ss.str());
         PrintSkills();
     }
 
     void MagicalCreature::PrintSkills() {
         auto loop_skills_and_print = [](const string& skill_type, const vector<CreatureSkill>& skills) -> void {
             spdlog::info("{} Skills: ", skill_type);
-            for (auto skill: skills)
+            for (const auto& skill: skills)
                 spdlog::info(skill.get_skill_name_with_desc());
         };
 
@@ -115,7 +113,7 @@ namespace MagicalForestFights::Creatures {
     }
 
     bool MagicalCreature::IsLuckyEnoughToDodgeAttack() {
-        return this->currentLuckThreshold <= this->GetLuck();
+        return this->GetLuck() >= this->currentLuckThreshold;
     }
 
     bool MagicalCreature::IsLuckyEnoughToTriggerSkill(double skill_activation_percentage) {
@@ -126,30 +124,27 @@ namespace MagicalForestFights::Creatures {
         return this->currentLuckThreshold;
     }
 
-    MagicalCreature::MagicalCreature(string  name, tuple<int, int> health_tpl,
-                                     tuple<int, int> strength_tpl,
-                                     tuple<int, int> defence_tpl, tuple<int, int> speed_tpl,
-                                     tuple<int, int> luck_tpl,
-                                     vector<CreatureSkill> attacking_skills,
-                                     vector<CreatureSkill> defending_skills) : name(std::move(name)),
-                                                                               health(Health<float>(
+    MagicalCreature::MagicalCreature(string name, tuple<int, int> health_tpl, tuple<int, int> strength_tpl,
+                                     tuple<int, int> defence_tpl, tuple<int, int> speed_tpl, tuple<int, int> luck_tpl,
+                                     vector<CreatureSkill> attacking_skills, vector<CreatureSkill> defending_skills) : name(std::move(name)),
+                                                                          health(Health<float>(
                                                                                        get<0>(health_tpl),
                                                                                        get<1>(health_tpl))),
-                                                                               strength(Strength<int>(
+                                                                          strength(Strength<int>(
                                                                                        get<0>(strength_tpl),
                                                                                        get<1>(strength_tpl))),
-                                                                               defence(Defence<int>(
+                                                                          defence(Defence<int>(
                                                                                        get<0>(defence_tpl),
                                                                                        get<1>(defence_tpl))),
-                                                                               speed(Speed<int>(
+                                                                          speed(Speed<int>(
                                                                                        get<0>(speed_tpl),
                                                                                        get<1>(speed_tpl))),
-                                                                               luck(Luck<double>(
+                                                                          luck(Luck<double>(
                                                                                        get<0>(luck_tpl),
                                                                                        get<1>(luck_tpl))),
-                                                                               attackingSkills(move(
+                                                                          attackingSkills(std::move(
                                                                                        attacking_skills)),
-                                                                               defendingSkills(move(
+                                                                          defendingSkills(std::move(
                                                                                        defending_skills)) {
     }
 
@@ -159,7 +154,6 @@ namespace MagicalForestFights::Creatures {
                                                                    defence(rhs.defence),
                                                                    speed(rhs.speed),
                                                                    luck(rhs.luck),
-                                                                   currentState(rhs.currentState),
                                                                    attackingSkills(rhs.attackingSkills),
                                                                    defendingSkills(rhs.defendingSkills) {
         currentLuckThreshold = rhs.currentLuckThreshold;

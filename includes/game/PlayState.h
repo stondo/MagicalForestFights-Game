@@ -31,9 +31,6 @@ namespace MagicalForestFights::Game {
 
     private:
         static PlayState playState;
-
-//        MagicalCreature *natelus;
-//        MagicalCreature *wild_beast;
     };
 }
 

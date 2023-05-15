@@ -4,7 +4,6 @@
 
 #include <utility>
 #include <tuple>
-#include <string_view>
 #include <vector>
 
 #include "stats/CreatureStat.h"
@@ -62,9 +61,11 @@ namespace MagicalForestFights::Creatures {
         void PrintSkills();
         void PrintInitStats();
 
-        MagicalCreature(std::string name, std::tuple<int, int> health_tpl, std::tuple<int, int> strength_tpl,
-                        std::tuple<int, int> defence_tpl, std::tuple<int, int> speed_tpl, std::tuple<int, int> luck_tpl,
-                        std::vector<CreatureSkill> attacking_skills, std::vector<CreatureSkill> defending_skills);
+        MagicalCreature(std::string name, std::tuple<int, int> health_tpl,
+                        std::tuple<int, int> strength_tpl, std::tuple<int, int> defence_tpl,
+                        std::tuple<int, int> speed_tpl, std::tuple<int, int> luck_tpl,
+                        std::vector<CreatureSkill> attacking_skills,
+                        std::vector<CreatureSkill> defending_skills);
 
         MagicalCreature(const MagicalCreature& rhs);
 

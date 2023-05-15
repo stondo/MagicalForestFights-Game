@@ -1,7 +1,3 @@
-//
-// Created by stondo on 25/02/23.
-//
-
 #include <iostream>
 #include <string>
 #include "../../includes/game/IntroState.h"
@@ -40,5 +36,6 @@ namespace MagicalForestFights::Game {
     }
 
     void IntroState::Update(GameEngine *game) {
+        HandleEvents(game);
     }
 }

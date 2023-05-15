@@ -1,11 +1,5 @@
-//
-// Created by Stefano Tondo on 06.05.23.
-//
-
 #ifndef MAGICALFORESTFIGHTS_RAPIDSTRIKE_H
 #define MAGICALFORESTFIGHTS_RAPIDSTRIKE_H
-
-#include "CreatureSkill.h"
 
 namespace MagicalForestFights::Creatures::Skills {
 

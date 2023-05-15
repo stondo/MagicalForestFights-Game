@@ -1,7 +1,3 @@
-//
-// Created by Stefano Tondo on 24.02.23.
-//
-
 #include <string>
 #include <iostream>
 #include "../../includes/game/GameEngine.h"

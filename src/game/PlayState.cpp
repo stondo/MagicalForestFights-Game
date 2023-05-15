@@ -1,4 +1,3 @@
-#include "spdlog/spdlog.h"
 #include "../../includes/game/PlayState.h"
 #include "../../includes/creatures/FightManager.h"
 
@@ -41,6 +40,6 @@ namespace MagicalForestFights::Game {
     }
 
     void PlayState::Update(GameEngine *game) {
-
+        HandleEvents(game);
     }
 }
