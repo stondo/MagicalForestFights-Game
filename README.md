@@ -1,4 +1,4 @@
-# MagicalForestFights_programming_task
+# CppND-Capstone-MagicalForestFights-Game
 
 ## Build docker image
 
