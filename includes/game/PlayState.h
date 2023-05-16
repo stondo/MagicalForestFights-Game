@@ -20,8 +20,6 @@ namespace MagicalForestFights::Game {
 
         void HandleEvents(GameEngine *game);
 
-        void Update(GameEngine *game);
-
         static PlayState *Instance() {
             return &playState;
         }

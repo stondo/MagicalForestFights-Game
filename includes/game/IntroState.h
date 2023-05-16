@@ -17,8 +17,6 @@ namespace MagicalForestFights::Game {
 
         void HandleEvents(GameEngine *game);
 
-        void Update(GameEngine *game);
-
         static IntroState *Instance() {
             return &introState;
         }

@@ -38,8 +38,4 @@ namespace MagicalForestFights::Game {
             game->Quit();
         }
     }
-
-    void PlayState::Update(GameEngine *game) {
-        HandleEvents(game);
-    }
 }

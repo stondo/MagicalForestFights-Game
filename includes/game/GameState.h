@@ -19,8 +19,6 @@ namespace MagicalForestFights::Game {
 
         virtual void HandleEvents(GameEngine *game) = 0;
 
-        virtual void Update(GameEngine *game) = 0;
-
         void ChangeState(GameEngine *game, GameState *state);
 
         int max_turns = 0;

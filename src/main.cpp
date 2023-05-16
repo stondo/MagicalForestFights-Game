@@ -8,10 +8,8 @@ int main() {
     game.Init( "Magical Forest Engine v1.0", 20);
     game.ChangeState( IntroState::Instance() );
 
-    while ( game.Running() )
-    {
+    while ( game.Running() ) {
         game.HandleEvents();
-        game.Update();
     }
 
     game.Cleanup();

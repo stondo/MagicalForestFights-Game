@@ -18,9 +18,9 @@ namespace MagicalForestFights::Game {
 
         void ChangeState(GameState *state);
 
-        void PushState(GameState *state);
+        [[maybe_unused]] void PushState(GameState *state);
 
-        void PopState();
+        [[maybe_unused]] void PopState();
 
         void HandleEvents();
 

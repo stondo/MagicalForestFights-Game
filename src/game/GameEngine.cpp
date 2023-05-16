@@ -30,7 +30,7 @@ namespace MagicalForestFights::Game {
         states.back()->Init();
     }
 
-    void GameEngine::PushState(GameState *state) {
+    [[maybe_unused]] void GameEngine::PushState(GameState *state) {
         // pause current state
         if (!states.empty()) {
             states.back()->Pause();
@@ -41,7 +41,7 @@ namespace MagicalForestFights::Game {
         states.back()->Init();
     }
 
-    void GameEngine::PopState() {
+    [[maybe_unused]] void GameEngine::PopState() {
         // cleanup the current state
         if (!states.empty()) {
             states.back()->Cleanup();
@@ -60,8 +60,8 @@ namespace MagicalForestFights::Game {
         states.back()->HandleEvents(this);
     }
 
-    void GameEngine::Update() {
-        // let the state update the game
-        states.back()->Update(this);
-    }
+//    void GameEngine::Update() {
+//        // let the state update the game
+//        states.back()->Update(this);
+//    }
 }

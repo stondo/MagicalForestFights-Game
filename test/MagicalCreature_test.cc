@@ -148,8 +148,6 @@ TEST_F(MagicalCreatureTest, VerifyMagicalShield) {
     fm.ProcessFight();
 
     EXPECT_EQ(fm.GetDamageDone(), 12.5f);
-//    EXPECT_EQ(god_natelus.GetHealth(), 87.5f);
-//    EXPECT_EQ(weak_wild_beast.GetHealth(), 50.0f);
 }
 
 TEST_F(MagicalCreatureTest, VerifyStateAfterMortalBlow) {
@@ -158,5 +156,4 @@ TEST_F(MagicalCreatureTest, VerifyStateAfterMortalBlow) {
 
     EXPECT_EQ(fm.GetDamageDone(), 100);
     EXPECT_EQ(fm.AnyMagicalCreatureDied(), true);
-//    EXPECT_STREQ(weak_wild_beast.GetCurrentState().get_value().c_str(), Dead().get_value().c_str());
 }
