@@ -1,4 +1,4 @@
-# CppND-Capstone-MagicalForestFights-Game
+# MagicalForestFights-Game
 
 ## Build docker image
 
