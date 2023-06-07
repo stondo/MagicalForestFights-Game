@@ -42,7 +42,6 @@ namespace MagicalForestFights::Creatures {
 
         void ProcessFight(int current_turn = 1, int max_turns = 20);
 
-        FightManager();
         FightManager(const MagicalCreature &hero, const MagicalCreature &beast);
 
         void swapAttDef();

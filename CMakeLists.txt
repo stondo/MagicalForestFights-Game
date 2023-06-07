@@ -3,20 +3,12 @@ set(CMAKE_C_COMPILER "/usr/bin/gcc")
 set(CMAKE_CXX_COMPILER "/usr/bin/g++")
 project(MagicalForestFights)
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 17)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall -Wextra -Werror -std=c++23")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall -Wextra -Werror -std=c++17")
 
-#if(NOT TARGET spdlog)
-#    # Stand-alone build
-#    find_package(spdlog REQUIRED)
-#endif()
-#find_package(spdlog REQUIRED)
-
-find_package(ryml REQUIRED)
 
 include_directories("lib/spdlog/include")
-include_directories("lib/rapidvsc")
 
 if(POLICY CMP0135)
     cmake_policy(SET CMP0135 NEW)
@@ -44,8 +36,8 @@ add_executable(MagicalForestFights src/main.cpp
         includes/game/GameState.h src/game/GameEngine.cpp includes/game/GameEngine.h src/game/GameState.cpp
         src/game/IntroState.cpp includes/game/IntroState.h
         src/game/PlayState.cpp includes/game/PlayState.h
-        includes/constants.h includes/creatures/skills/RapidStrike.h includes/creatures/skills/MagicalShield.h includes/utils/CharContainer.h)
-target_link_libraries(MagicalForestFights ryml::ryml)
+        includes/constants.h includes/creatures/skills/RapidStrike.h includes/creatures/skills/MagicalShield.h)
+target_link_libraries(MagicalForestFights)
 
 add_custom_target(run MagicalForestFights
         COMMAND $<TARGET_FILE:MagicalForestFights>
@@ -72,7 +64,6 @@ add_executable(
 target_link_libraries(
         MagicalForestFights_test
         GTest::gtest_main
-        ryml::ryml
 )
 
 include(GoogleTest)

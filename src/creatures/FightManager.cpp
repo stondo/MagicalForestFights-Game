@@ -4,7 +4,6 @@
 #include <unordered_map>
 #include "spdlog/spdlog.h"
 #include "../../includes/creatures/FightManager.h"
-#include "../../includes/utils/CharContainer.h"
 
 using namespace std;
 
@@ -173,125 +172,120 @@ namespace MagicalForestFights::Creatures {
         return attacker->GetCurrentState() == Dead() || defender->GetCurrentState() == Dead();
     }
 
-    FightManager::FightManager() {
-        readInitDataAndCreateMagicalCreatures();
-        setAttackerAndDefender();
-    }
-
     FightManager::FightManager(const MagicalCreature &hero, const MagicalCreature &beast) {
         attacker = make_unique<MagicalCreature>(hero);
         defender = make_unique<MagicalCreature>(beast);
         setAttackerAndDefender();
     }
 
-    void FightManager::readInitDataAndCreateMagicalCreatures() {
-        spdlog::info("Reading config file");
-
-        auto extractCreatureStats = [](const ryml::ConstNodeRef &creature) -> unique_ptr<MagicalCreature> {
-            auto skillFactoryLambda = [](const string &skillName, SkillType skillType, const string &skillDesc, double ap, float sf) -> CreatureSkill {
-                return {skillName, skillType, skillDesc, ap, sf};
-            };
-
-            unordered_map<string, decltype(skillFactoryLambda)> availableSkillsMap = {
-                    {"Rapid Strike", skillFactoryLambda},
-                    {"Magical Shield", skillFactoryLambda}
-            };
-
-            unordered_map<string, SkillType> skillTypeMap = {
-                    {"attack", SkillType::ATTACK},
-                    {"defense", SkillType::DEFENSE}
-            };
-
-            string heroName;
-            unordered_map<int, unordered_map<int, int>> creaturePropsMap = {
-                    {CreatureProperty::HEALTH,   {{MIN, 0}, {MAX, 0}}},
-                    {CreatureProperty::STRENGTH, {{MIN, 0}, {MAX, 0}}},
-                    {CreatureProperty::DEFENSE,  {{MIN, 0}, {MAX, 0}}},
-                    {CreatureProperty::SPEED,    {{MIN, 0}, {MAX, 0}}},
-                    {CreatureProperty::LUCK,     {{MIN, 0}, {MAX, 0}}}
-            };
-            vector<unordered_map<int, string>> creatureSkills;
-
-            creature[NAME] >> heroName;
-
-            creature[HEALTH][MIN] >> creaturePropsMap[HEALTH][MIN];
-            creature[HEALTH][MAX] >> creaturePropsMap[HEALTH][MAX];
-
-            creature[STRENGTH][MIN] >> creaturePropsMap[STRENGTH][MIN];
-            creature[STRENGTH][MAX] >> creaturePropsMap[STRENGTH][MAX];
-
-            creature[DEFENSE][MIN] >> creaturePropsMap[DEFENSE][MIN];
-            creature[DEFENSE][MAX] >> creaturePropsMap[DEFENSE][MAX];
-
-            creature[SPEED][MIN] >> creaturePropsMap[SPEED][MIN];
-            creature[SPEED][MAX] >> creaturePropsMap[SPEED][MAX];
-
-            creature[LUCK][MIN] >> creaturePropsMap[LUCK][MIN];
-            creature[LUCK][MAX] >> creaturePropsMap[LUCK][MAX];
-
-            unordered_map<int, string> creatureSkillsMap = {
-                    {CreatureSkillProperty::SKILL_NAME, ""},
-                    {CreatureSkillProperty::TYPE, ""},
-                    {CreatureSkillProperty::DESC, ""},
-                    {CreatureSkillProperty::ACTIVATION_PERCENTAGE, ""},
-                    {CreatureSkillProperty::SKILL_FACTOR, ""}
-            };
-
-            for (size_t k = 0; k < creature[SKILLS].num_children(); k++) {
-                for (auto skillProp: CreatureSkillProperties)
-                    creature[SKILLS][k][skillProp] >> creatureSkillsMap[skillProp];
-
-                creatureSkills.push_back(creatureSkillsMap);
-            }
-
-            vector<CreatureSkill> attackingSkills;
-            vector<CreatureSkill> defendingSkills;
-
-            for ( auto &cskill : creatureSkills ) {
-                auto skill = availableSkillsMap[cskill[CreatureSkillProperty::SKILL_NAME]](
-                        cskill[CreatureSkillProperty::SKILL_NAME],
-                        skillTypeMap[cskill[CreatureSkillProperty::TYPE]],
-                        cskill[CreatureSkillProperty::DESC],
-                        std::stod(cskill[CreatureSkillProperty::ACTIVATION_PERCENTAGE]),
-                        std::stof(cskill[CreatureSkillProperty::SKILL_FACTOR])
-                        );
-
-                if (skill.skill_type == SkillType::ATTACK) attackingSkills.push_back(skill);
-                else if (skill.skill_type == SkillType::DEFENSE) defendingSkills.push_back(skill);
-            }
-
-            unique_ptr<MagicalCreature> newCreature = make_unique<MagicalCreature>(
-                    heroName,
-                    tuple<int, int>(creaturePropsMap[HEALTH][MIN], creaturePropsMap[HEALTH][MAX]),
-                    tuple<int, int>(creaturePropsMap[STRENGTH][MIN], creaturePropsMap[STRENGTH][MAX]),
-                    tuple<int, int>(creaturePropsMap[DEFENSE][MIN], creaturePropsMap[DEFENSE][MAX]),
-                    tuple<int, int>(creaturePropsMap[SPEED][MIN], creaturePropsMap[SPEED][MAX]),
-                    tuple<int, int>(creaturePropsMap[LUCK][MIN], creaturePropsMap[LUCK][MAX]),
-                    attackingSkills,
-                    defendingSkills
-            );
-
-            return newCreature;
-        };
-
-        const char filename[] = "config.yaml";
-        auto contents = file_get_contents<std::string>(filename);
-
-        ryml::Tree tree = ryml::parse_in_arena(ryml::to_csubstr(contents)); // immutable (csubstr) overload
-
-        ryml::ConstNodeRef heroes = tree["heroes"];
-        ryml::ConstNodeRef monsters = tree["monsters"];
-
-        vector<unique_ptr<MagicalCreature>> mcs;
-
-        for (size_t i = 0; i < heroes.num_children(); i++)
-            mcs.push_back(extractCreatureStats(heroes[i]));
-
-        for (size_t i = 0; i < monsters.num_children(); i++)
-            mcs.push_back(extractCreatureStats(monsters[i]));
-
-        attacker = std::move(mcs[0]);
-        defender = std::move(mcs[1]);
-    }
+//    void FightManager::readInitDataAndCreateMagicalCreatures() {
+//        spdlog::info("Reading config file");
+//
+//        auto extractCreatureStats = [](const ryml::ConstNodeRef &creature) -> unique_ptr<MagicalCreature> {
+//            auto skillFactoryLambda = [](const string &skillName, SkillType skillType, const string &skillDesc, double ap, float sf) -> CreatureSkill {
+//                return {skillName, skillType, skillDesc, ap, sf};
+//            };
+//
+//            unordered_map<string, decltype(skillFactoryLambda)> availableSkillsMap = {
+//                    {"Rapid Strike", skillFactoryLambda},
+//                    {"Magical Shield", skillFactoryLambda}
+//            };
+//
+//            unordered_map<string, SkillType> skillTypeMap = {
+//                    {"attack", SkillType::ATTACK},
+//                    {"defense", SkillType::DEFENSE}
+//            };
+//
+//            string heroName;
+//            unordered_map<int, unordered_map<int, int>> creaturePropsMap = {
+//                    {CreatureProperty::HEALTH,   {{MIN, 0}, {MAX, 0}}},
+//                    {CreatureProperty::STRENGTH, {{MIN, 0}, {MAX, 0}}},
+//                    {CreatureProperty::DEFENSE,  {{MIN, 0}, {MAX, 0}}},
+//                    {CreatureProperty::SPEED,    {{MIN, 0}, {MAX, 0}}},
+//                    {CreatureProperty::LUCK,     {{MIN, 0}, {MAX, 0}}}
+//            };
+//            vector<unordered_map<int, string>> creatureSkills;
+//
+//            creature[NAME] >> heroName;
+//
+//            creature[HEALTH][MIN] >> creaturePropsMap[HEALTH][MIN];
+//            creature[HEALTH][MAX] >> creaturePropsMap[HEALTH][MAX];
+//
+//            creature[STRENGTH][MIN] >> creaturePropsMap[STRENGTH][MIN];
+//            creature[STRENGTH][MAX] >> creaturePropsMap[STRENGTH][MAX];
+//
+//            creature[DEFENSE][MIN] >> creaturePropsMap[DEFENSE][MIN];
+//            creature[DEFENSE][MAX] >> creaturePropsMap[DEFENSE][MAX];
+//
+//            creature[SPEED][MIN] >> creaturePropsMap[SPEED][MIN];
+//            creature[SPEED][MAX] >> creaturePropsMap[SPEED][MAX];
+//
+//            creature[LUCK][MIN] >> creaturePropsMap[LUCK][MIN];
+//            creature[LUCK][MAX] >> creaturePropsMap[LUCK][MAX];
+//
+//            unordered_map<int, string> creatureSkillsMap = {
+//                    {CreatureSkillProperty::SKILL_NAME, ""},
+//                    {CreatureSkillProperty::TYPE, ""},
+//                    {CreatureSkillProperty::DESC, ""},
+//                    {CreatureSkillProperty::ACTIVATION_PERCENTAGE, ""},
+//                    {CreatureSkillProperty::SKILL_FACTOR, ""}
+//            };
+//
+//            for (size_t k = 0; k < creature[SKILLS].num_children(); k++) {
+//                for (auto skillProp: CreatureSkillProperties)
+//                    creature[SKILLS][k][skillProp] >> creatureSkillsMap[skillProp];
+//
+//                creatureSkills.push_back(creatureSkillsMap);
+//            }
+//
+//            vector<CreatureSkill> attackingSkills;
+//            vector<CreatureSkill> defendingSkills;
+//
+//            for ( auto &cskill : creatureSkills ) {
+//                auto skill = availableSkillsMap[cskill[CreatureSkillProperty::SKILL_NAME]](
+//                        cskill[CreatureSkillProperty::SKILL_NAME],
+//                        skillTypeMap[cskill[CreatureSkillProperty::TYPE]],
+//                        cskill[CreatureSkillProperty::DESC],
+//                        std::stod(cskill[CreatureSkillProperty::ACTIVATION_PERCENTAGE]),
+//                        std::stof(cskill[CreatureSkillProperty::SKILL_FACTOR])
+//                        );
+//
+//                if (skill.skill_type == SkillType::ATTACK) attackingSkills.push_back(skill);
+//                else if (skill.skill_type == SkillType::DEFENSE) defendingSkills.push_back(skill);
+//            }
+//
+//            unique_ptr<MagicalCreature> newCreature = make_unique<MagicalCreature>(
+//                    heroName,
+//                    tuple<int, int>(creaturePropsMap[HEALTH][MIN], creaturePropsMap[HEALTH][MAX]),
+//                    tuple<int, int>(creaturePropsMap[STRENGTH][MIN], creaturePropsMap[STRENGTH][MAX]),
+//                    tuple<int, int>(creaturePropsMap[DEFENSE][MIN], creaturePropsMap[DEFENSE][MAX]),
+//                    tuple<int, int>(creaturePropsMap[SPEED][MIN], creaturePropsMap[SPEED][MAX]),
+//                    tuple<int, int>(creaturePropsMap[LUCK][MIN], creaturePropsMap[LUCK][MAX]),
+//                    attackingSkills,
+//                    defendingSkills
+//            );
+//
+//            return newCreature;
+//        };
+//
+//        const char filename[] = "config.yaml";
+//        auto contents = file_get_contents<std::string>(filename);
+//
+//        ryml::Tree tree = ryml::parse_in_arena(ryml::to_csubstr(contents)); // immutable (csubstr) overload
+//
+//        ryml::ConstNodeRef heroes = tree["heroes"];
+//        ryml::ConstNodeRef monsters = tree["monsters"];
+//
+//        vector<unique_ptr<MagicalCreature>> mcs;
+//
+//        for (size_t i = 0; i < heroes.num_children(); i++)
+//            mcs.push_back(extractCreatureStats(heroes[i]));
+//
+//        for (size_t i = 0; i < monsters.num_children(); i++)
+//            mcs.push_back(extractCreatureStats(monsters[i]));
+//
+//        attacker = std::move(mcs[0]);
+//        defender = std::move(mcs[1]);
+//    }
 
 }
